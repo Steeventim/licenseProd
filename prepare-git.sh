@@ -1,0 +1,1 @@
+scripts/prepare-licence-pro-git.sh

@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  domain    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  licenses  License[]
+
+  @@map("clients")
+}
+
+model License {
+  id        String        @id @default(cuid())
+  key       String        @unique
+  clientId  String
+  status    LicenseStatus @default(ACTIVE)
+  features  String[]
+  expiresAt DateTime?
+  tokenJWT  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  client    Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  usageLogs UsageLog[]
+
+  @@map("licenses")
+}
+
+model UsageLog {
+  id        String   @id @default(cuid())
+  licenseId String
+  ipAddress String
+  status    String
+  timestamp DateTime @default(now())
+  userAgent String?
+  license   License  @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@map("usage_logs")
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String   // Hash du mot de passe
+  role      AdminRole @default(ADMIN)
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+enum AdminRole {
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum LicenseStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+  EXPIRED
+}

@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: license_postgres
+    environment:
+      POSTGRES_DB: license_db
+      POSTGRES_USER: license_user
+      POSTGRES_PASSWORD: license_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - license_network
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      target: backend
+    container_name: license_backend
+    environment:
+      DATABASE_URL: postgresql://license_user:license_password@postgres:5432/license_db
+      JWT_SECRET: your-production-jwt-secret-very-long-and-secure
+      PORT: 3001
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    networks:
+      - license_network
+    restart: unless-stopped
+
+  # Frontend client
+  frontend:
+    build:
+      context: .
+      target: frontend
+    container_name: license_frontend
+    ports:
+      - "3003:80"
+    networks:
+      - license_network
+    restart: unless-stopped
+
+  # Dashboard admin
+  admin:
+    build:
+      context: .
+      target: admin
+    container_name: license_admin
+    ports:
+      - "3002:80"
+    networks:
+      - license_network
+    restart: unless-stopped
+
+  # Reverse proxy nginx (optionnel)
+  nginx:
+    image: nginx:alpine
+    container_name: license_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+      - frontend
+      - admin
+    networks:
+      - license_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  license_network:
+    driver: bridge

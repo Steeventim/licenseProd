@@ -1,0 +1,1 @@
+scripts/init-git-licence-pro.sh

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Validation Licence - Toutes Fonctionnalités</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        .license-info {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-item.active {
+            background: #c6f6d5;
+            border-color: #38a169;
+            color: #22543d;
+        }
+        .feature-item.inactive {
+            background: #fed7d7;
+            border-color: #e53e3e;
+            color: #742a2a;
+        }
+        .module-test {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .module-card {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .module-card.available {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+        .module-card.unavailable {
+            border-color: #e53e3e;
+            background: #fef5e7;
+        }
+        .module-card h3 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+        }
+        .module-card p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status.valid {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .status.invalid {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .btn {
+            background: #3182ce;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #2c5aa0;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #f7fafc;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Test de Validation des Licences</h1>
+            <p>Vérification complète de la licence et des fonctionnalités disponibles</p>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📋 Informations de la Licence</div>
+            <div id="licenseInfo" class="loading">Chargement des informations de licence...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎯 Fonctionnalités Testées</div>
+            <div id="featuresTest" class="loading">Vérification des fonctionnalités...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🏗️ Modules Disponibles</div>
+            <div id="modulesTest" class="loading">Test des modules...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🔗 Services Externes</div>
+            <div id="servicesTest" class="loading">Vérification des services...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🧪 Actions de Test</div>
+            <button class="btn" onclick="refreshLicense()">🔄 Actualiser la Licence</button>
+            <button class="btn" onclick="testAllModules()">🧪 Tester Tous les Modules</button>
+            <button class="btn" onclick="checkServices()">🌐 Vérifier les Services</button>
+            <div id="testResults" class="results" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration des modules attendus
+        const expectedModules = [
+            { id: "dashboard", name: "Tableau de Bord", features: [] },
+            { id: "documents", name: "Gestion Documentaire", features: ["documents"] },
+            { id: "search", name: "Recherche Intelligente", features: ["search"] },
+            { id: "bpm", name: "Interface BPM", features: ["bpm"] },
+            { id: "analytics", name: "Analyses & Rapports", features: ["analytics", "reports"] },
+            { id: "export", name: "Export de Données", features: ["export"] }
+        ];
+
+        // Services externes à tester
+        const externalServices = [
+            { name: "Backend API", url: "http://localhost:3001" },
+            { name: "Search Engine", url: "http://localhost:3000" },
+            { name: "Documents Service", url: "http://localhost:3004" },
+            { name: "BPM Interface", url: "http://localhost:5174" }
+        ];
+
+        // Licence de test
+        const testLicenseKey = "LIC-MCDMX42E-00F4248D-7C3B859A-F12E63D8";
+
+        async function loadLicenseInfo() {
+            try {
+                const response = await fetch(`http://localhost:3001/api/licenses/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ licenseKey: testLicenseKey })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                document.getElementById('licenseInfo').innerHTML = `
+                    <div class="license-info">
+                        <h3>🔑 Clé de Licence</h3>
+                        <p><code>${testLicenseKey}</code></p>
+                        <p><span class="status ${data.valid ? 'valid' : 'invalid'}">${data.valid ? 'VALIDE' : 'INVALIDE'}</span></p>
+                        
+                        <h3>📊 Détails</h3>
+                        <p><strong>Statut:</strong> ${data.license?.status || 'N/A'}</p>
+                        <p><strong>Client:</strong> ${data.license?.client?.name || 'N/A'}</p>
+                        <p><strong>Expiration:</strong> ${data.license?.expiresAt ? new Date(data.license.expiresAt).toLocaleDateString('fr-FR') : 'Permanente'}</p>
+                        
+                        <h3>🎯 Fonctionnalités Activées</h3>
+                        <div class="feature-list">
+                            ${(data.license?.features || []).map(feature => 
+                                `<div class="feature-item active">✅ ${feature}</div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+
+                return data;
+            } catch (error) {
+                document.getElementById('licenseInfo').innerHTML = `
+                    <div class="license-info">
+                        <p style="color: #e53e3e;">❌ Erreur lors du chargement: ${error.message}</p>
+                    </div>
+                `;
+                return null;
+            }
+        }
+
+        function testFeatures(licenseData) {
+            if (!licenseData || !licenseData.valid) {
+                document.getElementById('featuresTest').innerHTML = '<p style="color: #e53e3e;">❌ Impossible de tester les fonctionnalités - licence invalide</p>';
+                return;
+            }
+
+            const availableFeatures = licenseData.license?.features || [];
+            const allFeatures = ["basic", "bpm", "search", "export", "analytics", "reports", "documents"];
+
+            document.getElementById('featuresTest').innerHTML = `
+                <div class="feature-list">
+                    ${allFeatures.map(feature => {
+                        const isActive = availableFeatures.includes(feature);
+                        return `<div class="feature-item ${isActive ? 'active' : 'inactive'}">
+                            ${isActive ? '✅' : '❌'} ${feature}
+                        </div>`;
+                    }).join('')}
+                </div>
+                <p><strong>Résultat:</strong> ${availableFeatures.length}/${allFeatures.length} fonctionnalités activées</p>
+            `;
+        }
+
+        function testModules(licenseData) {
+            if (!licenseData || !licenseData.valid) {
+                document.getElementById('modulesTest').innerHTML = '<p style="color: #e53e3e;">❌ Impossible de tester les modules - licence invalide</p>';
+                return;
+            }
+
+            const availableFeatures = licenseData.license?.features || [];
+
+            document.getElementById('modulesTest').innerHTML = `
+                <div class="module-test">
+                    ${expectedModules.map(module => {
+                        const hasRequiredFeatures = module.features.length === 0 || 
+                            module.features.every(feature => availableFeatures.includes(feature));
+                        
+                        return `<div class="module-card ${hasRequiredFeatures ? 'available' : 'unavailable'}">
+                            <h3>${hasRequiredFeatures ? '✅' : '❌'} ${module.name}</h3>
+                            <p><strong>ID:</strong> ${module.id}</p>
+                            <p><strong>Requis:</strong> ${module.features.length > 0 ? module.features.join(', ') : 'Aucun'}</p>
+                            <p><strong>Statut:</strong> ${hasRequiredFeatures ? 'Disponible' : 'Indisponible'}</p>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        async function checkServices() {
+            document.getElementById('servicesTest').innerHTML = '<p class="loading">🔄 Vérification des services...</p>';
+            
+            const results = [];
+            
+            for (const service of externalServices) {
+                try {
+                    const response = await fetch(service.url, { 
+                        method: 'GET', 
+                        mode: 'no-cors',
+                        timeout: 5000 
+                    });
+                    results.push({ ...service, status: 'online', error: null });
+                } catch (error) {
+                    results.push({ ...service, status: 'offline', error: error.message });
+                }
+            }
+
+            document.getElementById('servicesTest').innerHTML = `
+                <div class="module-test">
+                    ${results.map(result => `
+                        <div class="module-card ${result.status === 'online' ? 'available' : 'unavailable'}">
+                            <h3>${result.status === 'online' ? '🟢' : '🔴'} ${result.name}</h3>
+                            <p><strong>URL:</strong> ${result.url}</p>
+                            <p><strong>Statut:</strong> ${result.status}</p>
+                            ${result.error ? `<p style="font-size: 0.75rem; color: #e53e3e;">${result.error}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function refreshLicense() {
+            document.getElementById('licenseInfo').innerHTML = '<p class="loading">🔄 Actualisation...</p>';
+            const licenseData = await loadLicenseInfo();
+            if (licenseData) {
+                testFeatures(licenseData);
+                testModules(licenseData);
+            }
+        }
+
+        async function testAllModules() {
+            const results = document.getElementById('testResults');
+            results.style.display = 'block';
+            results.innerHTML = '<p class="loading">🧪 Test de tous les modules en cours...</p>';
+
+            const licenseData = await loadLicenseInfo();
+            if (licenseData && licenseData.valid) {
+                const availableFeatures = licenseData.license?.features || [];
+                let testResults = '<h3>📋 Résultats des Tests</h3>';
+                
+                for (const module of expectedModules) {
+                    const hasRequiredFeatures = module.features.length === 0 || 
+                        module.features.every(feature => availableFeatures.includes(feature));
+                    
+                    testResults += `
+                        <p>${hasRequiredFeatures ? '✅' : '❌'} <strong>${module.name}</strong>: 
+                        ${hasRequiredFeatures ? 'Accessible' : `Manque ${module.features.filter(f => !availableFeatures.includes(f)).join(', ')}`}</p>
+                    `;
+                }
+                
+                results.innerHTML = testResults;
+            } else {
+                results.innerHTML = '<p style="color: #e53e3e;">❌ Licence invalide - impossible de tester les modules</p>';
+            }
+        }
+
+        // Chargement initial
+        window.addEventListener('load', async () => {
+            const licenseData = await loadLicenseInfo();
+            if (licenseData) {
+                testFeatures(licenseData);
+                testModules(licenseData);
+            }
+            await checkServices();
+        });
+    </script>
+</body>
+</html>
