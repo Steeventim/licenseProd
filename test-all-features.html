@@ -149,6 +149,17 @@
         </div>
 
         <div class="test-section">
+            <div class="test-title">🔑 Tester une Licence Personnalisée</div>
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="customLicenseKey" placeholder="Entrez votre clé de licence (ex: LIC-MCT3KZQF-...)" 
+                       value="LIC-MCT3KZQF-6C178909E85E708CBA0CB22FF1CEAC0C"
+                       style="width: 400px; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px; margin-right: 10px;">
+                <button class="btn" onclick="testCustomLicense()">🧪 Tester cette licence</button>
+            </div>
+            <div id="customLicenseResult" style="margin-top: 10px;"></div>
+        </div>
+
+        <div class="test-section">
             <div class="test-title">📋 Informations de la Licence</div>
             <div id="licenseInfo" class="loading">Chargement des informations de licence...</div>
         </div>
@@ -197,7 +208,63 @@
         ];
 
         // Licence de test
-        const testLicenseKey = "LIC-MCDMX42E-00F4248D-7C3B859A-F12E63D8";
+        const testLicenseKey = "LIC-MCT3KZQF-6C178909E85E708CBA0CB22FF1CEAC0C";
+
+        async function testCustomLicense() {
+            const customKey = document.getElementById('customLicenseKey').value.trim();
+            const resultDiv = document.getElementById('customLicenseResult');
+            
+            if (!customKey) {
+                resultDiv.innerHTML = '<p style="color: #e53e3e;">❌ Veuillez entrer une clé de licence</p>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<p class="loading">🔄 Test de la licence en cours...</p>';
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/licenses/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${customKey}`
+                    },
+                    body: JSON.stringify({ domain: "test.local" })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.valid) {
+                    const features = data.license?.features || [];
+                    resultDiv.innerHTML = `
+                        <div style="padding: 15px; background: #c6f6d5; border-radius: 6px; color: #22543d;">
+                            <h4>✅ Licence Valide</h4>
+                            <p><strong>Client:</strong> ${data.license?.client?.name || 'N/A'}</p>
+                            <p><strong>Fonctionnalités:</strong> ${features.join(', ') || 'Aucune'}</p>
+                            <p><strong>Statut:</strong> ${data.license?.status}</p>
+                            ${data.license?.expiresAt ? `<p><strong>Expire le:</strong> ${new Date(data.license.expiresAt).toLocaleDateString()}</p>` : '<p>Pas d\'expiration</p>'}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="padding: 15px; background: #fed7d7; border-radius: 6px; color: #742a2a;">
+                            <h4>❌ Licence Invalide</h4>
+                            <p><strong>Raison:</strong> ${data.reason || 'Licence non trouvée ou expirée'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="padding: 15px; background: #fed7d7; border-radius: 6px; color: #742a2a;">
+                        <h4>❌ Erreur de Test</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
 
         async function loadLicenseInfo() {
             try {
@@ -205,8 +272,9 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${testLicenseKey}`
                     },
-                    body: JSON.stringify({ licenseKey: testLicenseKey })
+                    body: JSON.stringify({ domain: "test.local" })
                 });
 
                 if (!response.ok) {

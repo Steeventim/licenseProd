@@ -30,6 +30,7 @@ Ce projet implémente un écosystème de gestion de licences comprenant :
 - **Validation dynamique** des modules selon la licence
 - **Garde de fonctionnalités** (FeatureGuard, LicenseGuard)
 - **Design Tailwind CSS** cohérent et accessible
+- **Récupération automatique** de licence de test
 
 ### 🛡️ Dashboard Administrateur
 - **Authentification sécurisée** (JWT + bcrypt)
@@ -38,17 +39,19 @@ Ce projet implémente un écosystème de gestion de licences comprenant :
 - **Feedback utilisateur** en temps réel
 
 ### 🔧 Backend API
-- **Architecture RESTful** avec Express.js
+- **Architecture RESTful** avec Fastify
 - **Base de données PostgreSQL** avec Prisma ORM
 - **Authentification JWT** sécurisée
 - **Validation robuste** des licences
 - **Gestion des erreurs** centralisée
+- **Endpoint de test automatique** (/api/licenses/test-license)
 
 ### 📊 Système de Licences
 - **Génération de clés** sécurisées
 - **Validation en temps réel** 
 - **Gestion des expirations**
-- **Fonctionnalités modulaires** (basic, analytics, export, reports, etc.)
+- **Fonctionnalités modulaires** (search, export, analytics, api_access)
+- **Licences de test automatiques** (24h)
 
 ## 🚀 Installation et Démarrage
 
@@ -62,12 +65,18 @@ Ce projet implémente un écosystème de gestion de licences comprenant :
 1. **Cloner le projet** :
 ```bash
 git clone <votre-repo>
-cd Licenses_prod
+cd licenseProd
 ```
 
 2. **Démarrer tous les services** :
 ```bash
 ./start-all-services.sh
+```
+
+3. **Générer une licence de test** :
+```bash
+cd backend
+npm run init-test-license
 ```
 
 Le script lance automatiquement :
@@ -80,7 +89,7 @@ Le script lance automatiquement :
 Après démarrage, accédez à :
 - **Frontend Client** : http://localhost:5173
 - **Dashboard Admin** : http://localhost:5174
-- **API Backend** : http://localhost:3001
+- **API Backend** : http://localhost:3001/api
 - **Interface de Test** : Ouvrir `test-all-features.html`
 
 ## 📖 Documentation
@@ -88,9 +97,13 @@ Après démarrage, accédez à :
 La documentation complète est disponible dans le dossier `docs/` :
 
 - [`docs/README.md`](docs/README.md) - Index de la documentation
+- [`docs/QUICK_START_GUIDE.md`](docs/QUICK_START_GUIDE.md) - 🚀 Guide de démarrage rapide (5 min)
+- [`docs/FAQ.md`](docs/FAQ.md) - 🆕 Questions fréquentes et dépannage
+- [`docs/AUTO_LICENSE_INITIALIZATION_SYSTEM.md`](docs/AUTO_LICENSE_INITIALIZATION_SYSTEM.md) - Système d'initialisation automatique
 - [`UNIFIED_ECOSYSTEM_DOCUMENTATION.md`](docs/UNIFIED_ECOSYSTEM_DOCUMENTATION.md) - Architecture complète
 - [`LOGIN_IMPLEMENTATION_REPORT.md`](docs/LOGIN_IMPLEMENTATION_REPORT.md) - Système d'authentification
 - [`LICENSE_EDIT_FEATURE_REPORT.md`](docs/LICENSE_EDIT_FEATURE_REPORT.md) - Gestion des licences
+- [`CHANGELOG.md`](CHANGELOG.md) - 📝 Historique des versions
 
 ### Navigation Rapide
 ```bash
@@ -107,12 +120,21 @@ Le fichier `test-all-features.html` permet de :
 - ✅ Tester les fonctionnalités disponibles
 - ✅ Vérifier les modules accessibles
 - ✅ Contrôler les services externes
+- ✅ Saisir des clés personnalisées
 
 ### Scripts de Test
 ```bash
 ./scripts/test-auth-admin.sh          # Test authentification admin
 ./scripts/test-integration.sh         # Tests d'intégration
 ./scripts/test-unified-ecosystem.sh   # Test écosystème complet
+```
+
+### Commandes de Licence de Test
+```bash
+# Dans le dossier backend/
+npm run init-test-license      # Générer une licence de test (24h)
+npm run test-license:generate  # Alternative pour générer
+npm run test-license:status    # Voir le statut des licences
 ```
 
 ## 🔧 Scripts Utiles
@@ -130,13 +152,28 @@ Le fichier `test-all-features.html` permet de :
 ./scripts/test-auth-admin.sh    # Créer un admin de test
 ```
 
-## 📊 Licence de Test
+## 📊 Licences de Test
 
-Une licence de démonstration est incluse :
+### Génération Automatique
+Le système génère automatiquement des licences de test de 24h :
+```bash
+cd backend
+npm run init-test-license
 ```
-Clé : LIC-MCDMX42E-00F4248D-7C3B859A-F12E63D8
-Fonctionnalités : basic, bpm, search, export, analytics, reports, documents
-```
+
+### Licence de Test Actuelle
+- **Durée** : 24 heures à partir de la génération
+- **Domaine** : localhost
+- **Fonctionnalités stratégiques** :
+  - 🔍 **search** : Moteur de recherche avancé
+  - 📤 **export** : Export de données (CSV, JSON)
+  - 📊 **analytics** : Analytics et statistiques
+  - 🔌 **api_access** : Accès complet à l'API
+
+### Utilisation
+1. **Frontend automatique** : Le frontend récupère automatiquement la licence active
+2. **Manuel** : Cliquer sur "Utiliser la licence de test"
+3. **API directe** : GET `/api/licenses/test-license`
 
 ## 🛠️ Technologies Utilisées
 
@@ -146,10 +183,11 @@ Fonctionnalités : basic, bpm, search, export, analytics, reports, documents
 - **TypeScript** pour la sécurité des types
 
 ### Backend  
-- **Node.js** + **Express.js**
+- **Node.js** + **Fastify**
 - **Prisma ORM** + **PostgreSQL**
 - **JWT** pour l'authentification
 - **bcrypt** pour le hachage des mots de passe
+- **Zod** pour la validation des données
 
 ### DevOps
 - **Scripts Bash** pour l'automatisation
@@ -178,6 +216,8 @@ Pour contribuer au projet :
 ## 📞 Contact
 
 Pour toute question ou support :
+- **Guide rapide** : [`docs/QUICK_START_GUIDE.md`](docs/QUICK_START_GUIDE.md)
+- **FAQ** : [`docs/FAQ.md`](docs/FAQ.md) - Questions fréquentes
 - **Documentation** : Voir le dossier `docs/`
 - **Issues** : Utiliser les issues GitHub
 - **Tests** : Lancer `test-all-features.html`

@@ -24,7 +24,22 @@ export const LicenseProvider = ({ children }) => {
   const initializeLicense = async () => {
     try {
       // Récupérer la clé de licence depuis localStorage
-      const licenseKey = localStorage.getItem('licenseKey');
+      let licenseKey = localStorage.getItem('licenseKey');
+      
+      if (!licenseKey) {
+        // Essayer de récupérer automatiquement une licence de test
+        try {
+          const testLicenseResponse = await fetch(`${import.meta.env.VITE_API_URL}/licenses/test-license`);
+          if (testLicenseResponse.ok) {
+            const testLicenseData = await testLicenseResponse.json();
+            licenseKey = testLicenseData.licenseKey;
+            localStorage.setItem('licenseKey', licenseKey);
+            console.log('🎯 Licence de test automatique récupérée:', testLicenseData);
+          }
+        } catch (testError) {
+          console.warn('Aucune licence de test automatique disponible:', testError.message);
+        }
+      }
       
       if (!licenseKey) {
         setLicenseState(prev => ({
@@ -38,7 +53,7 @@ export const LicenseProvider = ({ children }) => {
 
       // Valider la licence
       const validation = await licenseAPI.validateLicense(licenseKey, {
-        domain: window.location.hostname
+        domain: import.meta.env.VITE_LICENSE_DOMAIN || window.location.hostname
       });
 
       if (validation.valid) {

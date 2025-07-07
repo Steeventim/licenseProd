@@ -422,4 +422,52 @@ export async function licenseRoutes(fastify, options) {
       return reply.code(500).send({ error: "Erreur serveur" });
     }
   });
+
+  // GET /test-license - Récupérer la licence de test active
+  fastify.get("/test-license", async (request, reply) => {
+    try {
+      // Chercher le client de test (localhost)
+      const testClient = await prisma.client.findFirst({
+        where: { domain: "localhost" },
+      });
+
+      if (!testClient) {
+        return reply.code(404).send({ error: "Client de test non trouvé" });
+      }
+
+      // Chercher la licence active pour ce client
+      const activeLicense = await prisma.license.findFirst({
+        where: {
+          clientId: testClient.id,
+          status: "ACTIVE",
+          expiresAt: {
+            gt: new Date(),
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (!activeLicense) {
+        return reply.code(404).send({
+          error: "Aucune licence de test active trouvée",
+        });
+      }
+
+      return reply.send({
+        success: true,
+        licenseKey: activeLicense.key,
+        expiresAt: activeLicense.expiresAt,
+        features: activeLicense.features,
+        timeLeft: Math.ceil(
+          (activeLicense.expiresAt - new Date()) / (1000 * 60 * 60)
+        ), // heures restantes
+      });
+    } catch (error) {
+      console.error("Erreur récupération licence de test:", error);
+      return reply.code(500).send({
+        error: "Erreur interne du serveur",
+        details: error.message,
+      });
+    }
+  });
 }

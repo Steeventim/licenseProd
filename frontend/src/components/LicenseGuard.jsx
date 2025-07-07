@@ -37,8 +37,22 @@ export const LicenseGuard = ({ children, feature = null, fallback = null }) => {
       }
     };
 
-    const handleTestLicense = () => {
-      setInputKey("LIC-MCDMX42E-00F42483307651B46A8E5843AEF7AC47");
+    const handleTestLicense = async () => {
+      try {
+        // Essayer de récupérer automatiquement la licence de test
+        const testLicenseResponse = await fetch(`${import.meta.env.VITE_API_URL}/licenses/test-license`);
+        if (testLicenseResponse.ok) {
+          const testLicenseData = await testLicenseResponse.json();
+          setInputKey(testLicenseData.licenseKey);
+        } else {
+          // Fallback sur la clé codée en dur
+          setInputKey("LIC-TESTMCT55VP9-0141C9E8DE1B9013E82DEBC4367A91A4");
+        }
+      } catch (error) {
+        console.warn('Erreur récupération licence de test:', error);
+        // Fallback sur la clé codée en dur
+        setInputKey("LIC-MCT3KZQF-6C178909E85E708CBA0CB22FF1CEAC0C");
+      }
     };
 
     return (

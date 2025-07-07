@@ -36,6 +36,27 @@ function App() {
     checkAuth();
   }, []);
 
+  // Écouter les changements de hash pour la navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'clients' || hash === 'licenses' || hash === 'dashboard') {
+        setActiveTab(hash);
+      }
+    };
+
+    // Gérer le hash initial
+    handleHashChange();
+
+    // Écouter les changements de hash
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Nettoyer l'event listener
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
   const handleLogin = async (credentials) => {
     setLoginLoading(true);
     setLoginError("");
@@ -107,21 +128,30 @@ function App() {
         <div className="tabs">
           <button
             className={`tab ${activeTab === "dashboard" ? "active" : ""}`}
-            onClick={() => setActiveTab("dashboard")}
+            onClick={() => {
+              setActiveTab("dashboard");
+              window.location.hash = "#dashboard";
+            }}
           >
             <BarChart3 size={18} />
             Tableau de bord
           </button>
           <button
             className={`tab ${activeTab === "clients" ? "active" : ""}`}
-            onClick={() => setActiveTab("clients")}
+            onClick={() => {
+              setActiveTab("clients");
+              window.location.hash = "#clients";
+            }}
           >
             <Users size={18} />
             Clients
           </button>
           <button
             className={`tab ${activeTab === "licenses" ? "active" : ""}`}
-            onClick={() => setActiveTab("licenses")}
+            onClick={() => {
+              setActiveTab("licenses");
+              window.location.hash = "#licenses";
+            }}
           >
             <Shield size={18} />
             Licences

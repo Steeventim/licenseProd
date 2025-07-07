@@ -19,6 +19,7 @@ Ce dossier contient toute la documentation du projet de gestion de licences.
 | `SCRIPTS_UNIFICATION_REPORT.md` | Unification des scripts de démarrage |
 | `LOGIN_IMPLEMENTATION_REPORT.md` | Implémentation système d'authentification |
 | `LICENSE_EDIT_FEATURE_REPORT.md` | Fonctionnalité d'édition des licences |
+| `AUTO_LICENSE_INITIALIZATION_SYSTEM.md` | 🆕 Système d'initialisation automatique de licences |
 
 ### 🌐 Interface et Frontend
 | Fichier | Description |
@@ -49,25 +50,37 @@ Ce dossier contient toute la documentation du projet de gestion de licences.
 | Fichier | Description |
 |---------|-------------|
 | `VISUAL_TESTING_WORKFLOW.md` | Workflow de tests visuels |
+| `FAQ.md` | 🆕 Questions fréquentes et dépannage |
 
 ## 🎯 DOCUMENTS PRINCIPAUX
 
 ### Pour commencer
 1. `../README.md` - Présentation générale du projet
-2. `UNIFIED_ECOSYSTEM_DOCUMENTATION.md` - Architecture complète
-3. `START_SERVICES_DOCUMENTATION.md` - Comment démarrer les services
+2. `QUICK_START_GUIDE.md` - 🚀 Guide de démarrage rapide (5 min)
+3. `UNIFIED_ECOSYSTEM_DOCUMENTATION.md` - Architecture complète
+4. `START_SERVICES_DOCUMENTATION.md` - Comment démarrer les services
+5. `AUTO_LICENSE_INITIALIZATION_SYSTEM.md` - 🆕 Licences de test automatiques
 
 ### Pour les développeurs
 1. `INTERFACE_CLIENT_REWRITE_REPORT_V2.md` - Dernière version de l'interface
 2. `DASHBOARD_STRUCTURE_FIX_REPORT.md` - Structure du dashboard admin
 3. `LOGIN_IMPLEMENTATION_REPORT.md` - Système d'authentification
+4. `AUTO_LICENSE_INITIALIZATION_SYSTEM.md` - Workflow de développement avec licences
 
 ### Pour l'administration
 1. `LICENSE_EDIT_FEATURE_REPORT.md` - Gestion des licences
 2. `SCRIPTS_UNIFICATION_REPORT.md` - Scripts unifiés
 3. `PORTS_CONFIGURATION.md` - Configuration réseau
+4. `AUTO_LICENSE_INITIALIZATION_SYSTEM.md` - Maintenance des licences de test
 
 ## 📊 CHRONOLOGIE DES VERSIONS
+
+### Version 3.1 (Juillet 2025) - 🆕 DERNIÈRE VERSION
+- Système d'initialisation automatique de licences de test
+- Endpoint API `/api/licenses/test-license`
+- Récupération automatique de licence côté frontend
+- Commandes npm intégrées pour la gestion des licences
+- Documentation complète du système
 
 ### Version 3.0 (Juillet 2025)
 - Unification des scripts de démarrage
@@ -93,5 +106,6 @@ Ce dossier contient toute la documentation du projet de gestion de licences.
 
 ---
 
-📅 **Dernière mise à jour** : 4 juillet 2025  
-🎯 **Statut** : Documentation complète et organisée
+📅 **Dernière mise à jour** : 7 juillet 2025  
+🎯 **Statut** : Documentation complète et organisée  
+🆕 **Nouveauté** : Système d'initialisation automatique de licences de test

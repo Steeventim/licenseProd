@@ -175,7 +175,37 @@ cd FrontBPMF && npm run dev
 cd admin-dashboard && npm run dev
 ```
 
-### 2. Génération d'une Licence
+### 2. Système d'Initialisation Automatique de Licences (🆕 v3.1)
+
+Le système génère automatiquement des licences de test pour faciliter le développement :
+
+```bash
+# Génération automatique de licence de test (24h)
+cd backend
+npm run init-test-license
+
+# Vérification du statut des licences
+npm run test-license:status
+
+# Alternative directe
+node scripts/init-test-license.cjs generate
+```
+
+**Fonctionnalités de la licence de test :**
+- **Durée** : 24 heures renouvelables
+- **Domaine** : localhost
+- **Features stratégiques** :
+  - `search` : Moteur de recherche avancé
+  - `export` : Export de données (CSV, JSON)
+  - `analytics` : Analytics et statistiques  
+  - `api_access` : Accès complet à l'API
+
+**Intégration frontend automatique :**
+- Le frontend récupère automatiquement la licence active via `/api/licenses/test-license`
+- Bouton "Utiliser la licence de test" dans l'interface
+- Fallback sur clé codée en dur si l'API échoue
+
+### 3. Génération Manuelle d'une Licence
 
 ```bash
 curl -X POST http://localhost:3001/api/licenses \
@@ -191,7 +221,7 @@ curl -X POST http://localhost:3001/api/licenses \
   }'
 ```
 
-### 3. Utilisation de la Licence
+### 4. Utilisation de la Licence
 
 **Dans les APIs :**
 ```bash
